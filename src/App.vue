@@ -32,17 +32,22 @@
         </div>
       </b-dialog>
     </div>
-    <div class="mb-3"></div>
+    <div class="mb-3">
+      <div class="flex">
+        <b-time-picker />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-// import axios from "axios";
+import axios from "axios";
 import BDialog from "./components/App/BDialog.vue";
 import BInput from "./components/App/BInput.vue";
 import BButton from "./components/App/BButton.vue";
+import BTimePicker from "./components/App/BTimePicker.vue";
 export default {
-  components: { BInput, BDialog, BButton },
+  components: { BInput, BDialog, BButton, BTimePicker },
   name: "App",
   data() {
     return {
@@ -50,9 +55,9 @@ export default {
       showDialog: false,
     };
   },
-  // async created() {
-  //   const res = await axios.get("/branches");
-  //   console.log(res);
-  // },
+  async created() {
+    const res = await axios.get("/branches");
+    console.log(res);
+  },
 };
 </script>

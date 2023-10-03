@@ -1,7 +1,8 @@
 // setup axios config
 import axios from "axios";
 
-axios.defaults.baseURL = "https://api.foodics.dev/v5";
+axios.defaults.baseURL =
+  "https://cors-anywhere.herokuapp.com/https://api.foodics.dev/v5";
 
 axios.interceptors.request.use((req) => {
   req.headers.set("Content-Type", "application/json");
@@ -10,6 +11,5 @@ axios.interceptors.request.use((req) => {
     "Authorization",
     `Bearer ${process.env.VUE_APP_API_ACCESS_TOKEN}`
   );
-  req.headers.set("Access-Control-Allow-Origin", "*");
   return req;
 });

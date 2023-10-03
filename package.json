@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start:server": "node server/index.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
@@ -11,6 +12,8 @@
     "ar-catch": "^0.0.23",
     "axios": "^1.5.1",
     "core-js": "^3.8.3",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
     "postcss-cli": "^10.1.0",
     "vue": "^2.6.14"
   },
