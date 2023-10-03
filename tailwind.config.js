@@ -3,7 +3,11 @@ export default {
   darkMode: "class",
   content: ["./src/**/*.{vue,js}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: "#5F27CD",
+      },
+    },
   },
   plugins: [],
 };
