@@ -41,7 +41,6 @@
 </template>
 
 <script>
-import axios from "axios";
 import BDialog from "./components/App/BDialog.vue";
 import BInput from "./components/App/BInput.vue";
 import BButton from "./components/App/BButton.vue";
@@ -54,10 +53,6 @@ export default {
       inputValue: "",
       showDialog: false,
     };
-  },
-  async created() {
-    const res = await axios.get("/branches");
-    console.log(res);
   },
 };
 </script>

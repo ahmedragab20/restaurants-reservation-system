@@ -21,3 +21,16 @@
 <script>
 export default {};
 </script>
+<style>
+select {
+  /* for Firefox */
+  -moz-appearance: none;
+  /* for Chrome */
+  -webkit-appearance: none;
+}
+
+/* For IE10 */
+select::-ms-expand {
+  display: none;
+}
+</style>
