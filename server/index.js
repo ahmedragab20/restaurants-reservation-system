@@ -3,7 +3,6 @@ const BASE_URL = "https://api.foodics.dev/v5/";
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
-const { getQueryParams } = require("./utils");
 
 require("dotenv").config();
 
@@ -18,10 +17,6 @@ app.get("/branches", async (req, res) => {
   try {
     const reqURL = req.protocol + "://" + req.get("host") + req.originalUrl;
     const url = reqURL.replace("http://localhost:4000/", BASE_URL);
-
-    const reqBody = getQueryParams(url);
-    console.log("URL: ", url);
-    console.log("Body: ", reqBody);
 
     const options = {
       method: "GET",
