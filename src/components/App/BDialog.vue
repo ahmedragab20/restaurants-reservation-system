@@ -18,17 +18,21 @@ export default {
       default: false,
     },
   },
+  watch: {
+    value(val) {
+      if (val) {
+        document.body.style.overflow = "hidden";
+      } else {
+        document.body.style.overflow = "auto";
+      }
+    },
+  },
   mounted() {
-    document.body.style.overflow = "hidden";
-
     addEventListener("keyup", (e) => {
       if (e.key === "Escape") {
         this.$emit("input", false);
       }
     });
-  },
-  destroyed() {
-    document.body.style.overflow = "auto";
   },
 };
 </script>
