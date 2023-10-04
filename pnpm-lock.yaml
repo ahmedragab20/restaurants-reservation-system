@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  ar-catch:
-    specifier: ^0.0.23
-    version: 0.0.23(typescript@5.2.2)
   axios:
     specifier: ^1.5.1
     version: 1.5.1
@@ -2422,14 +2419,6 @@ packages:
     dependencies:
       normalize-path: 3.0.0
       picomatch: 2.3.1
-
-  /ar-catch@0.0.23(typescript@5.2.2):
-    resolution: {integrity: sha512-4jBxYrp0f3vn+yfWiGxr49i+OrUwe0UH5qHvOoBAUKYYyX/ELdfTOGk3uBqMQhdkoPF54arExCHhm/mdC+0zIg==}
-    peerDependencies:
-      typescript: ^5.0.2
-    dependencies:
-      typescript: 5.2.2
-    dev: false
 
   /arch@2.2.0:
     resolution: {integrity: sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==}
@@ -6737,12 +6726,6 @@ packages:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
-
-  /typescript@5.2.2:
-    resolution: {integrity: sha512-mI4WrpHsbCIcwT9cF4FZvr80QUeKvsUsUvKDoR+X/7XHQH98xYD8YHZg7ANtz2GtZt/CBq2QJ0thkGJMHfqc1w==}
-    engines: {node: '>=14.17'}
-    hasBin: true
-    dev: false
 
   /unicode-canonical-property-names-ecmascript@2.0.0:
     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}

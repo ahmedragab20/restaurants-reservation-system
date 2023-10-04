@@ -3,13 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "start:server": "node server/index.js",
+    "start:server": "nodemon server/index.js",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
-    "ar-catch": "^0.0.23",
     "axios": "^1.5.1",
     "bootstrap-icons": "^1.11.1",
     "core-js": "^3.8.3",

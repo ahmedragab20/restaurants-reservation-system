@@ -86,10 +86,8 @@
           >
             <slot
               name="d-body"
-              :option="{
-                option,
-                selected: optionSelected(option),
-              }"
+              :option="option"
+              :selected="optionSelected(option)"
             />
           </div>
         </template>
@@ -370,7 +368,7 @@ export default {
     }
   },
   created() {
-    // reset the component
+    // setup the component
     if (this.multiselect) {
       this.selectedOption = [];
     }

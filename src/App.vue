@@ -12,11 +12,10 @@
     </header>
     <div class="container mx-auto mt-20 bg-white border rounded-lg">
       <div class="flex items-center justify-end p-3 sm:p-6">
-        <b-button
-          class="px-4 py-2 border rounded-lg text-slate-600 hover:bg-slate-100"
-        >
-          Add Branches
-        </b-button>
+        <add-branch
+          :branches="unAvailableBranches"
+          @update-branches="fetchBranches"
+        />
       </div>
       <!-- table of branches -->
       <div class="pb-3 overflow-auto">
@@ -38,28 +37,99 @@
             </tr>
           </thead>
           <tbody>
-            <tr
-              class="cursor-pointer select-none hover:bg-slate-50 hover:shadow"
-            >
-              <td class="p-3 sm:p-5">Branch 1</td>
-              <td class="p-3 sm:p-5">B01</td>
-              <td class="p-3 sm:p-5">1</td>
-              <td class="p-3 sm:p-5">30 minutes</td>
-            </tr>
+            <template v-if="availableBranches?.length">
+              <tr
+                v-for="branch in availableBranches"
+                :key="branch.id"
+                class="cursor-pointer select-none hover:bg-slate-50 hover:shadow"
+              >
+                <td class="p-3 sm:p-5">
+                  {{ branch.name }}
+                </td>
+                <td class="p-3 sm:p-5">
+                  {{ branch.reference }}
+                </td>
+                <td class="p-3 sm:p-5">
+                  {{ getNumberOfTables(branch) }}
+                </td>
+                <td class="p-3 sm:p-5">
+                  {{ branch.reservation_duration }} Minutes
+                </td>
+              </tr>
+            </template>
+            <template v-else-if="availableBranches?.length === 0">
+              <tr>
+                <td colspan="4" class="p-3 text-center sm:p-5">
+                  No branches available for reservations
+                </td>
+              </tr>
+            </template>
+            <template v-else>
+              <tr class="w-full">
+                <td
+                  colspan="4"
+                  class="flex items-center w-full gap-3 p-3 sm:p-5 text-slate-600"
+                >
+                  <b-spinner /> Loading
+                </td>
+              </tr>
+            </template>
           </tbody>
         </table>
       </div>
     </div>
+
+    <!-- 
+      @Notes:
+        - I'll be moving each model to a separate component, it maybe not the best way of handling that
+          but it supposed to be cleaner and easier to maintain and debug
+     -->
   </div>
 </template>
 
 <script>
+import { getBranches } from "@/utils/api";
 import BButton from "./components/App/BButton.vue";
+import AddBranch from "./components/ActionModels/AddBranch.vue";
+import BSpinner from "./components/App/BSpinner.vue";
+
 export default {
-  components: { BButton },
+  components: { BButton, AddBranch, BSpinner },
   name: "App",
   data() {
-    return {};
+    return {
+      branches: null,
+    };
+  },
+  computed: {
+    availableBranches() {
+      return this.branches?.data?.filter(
+        (b) => b.accepts_reservations === true
+      );
+    },
+    unAvailableBranches() {
+      return this.branches?.data?.filter(
+        (b) => b.accepts_reservations === false
+      );
+    },
+  },
+  methods: {
+    getNumberOfTables(branch) {
+      return (
+        branch.sections?.map((sc) => {
+          return (
+            sc.tables?.map((t) => t.accepts_reservations === true)?.length || 0
+          );
+        })?.length || 0
+      );
+    },
+    async fetchBranches() {
+      this.branches = null;
+      this.branches = await getBranches();
+    },
+  },
+  async created() {
+    await this.fetchBranches();
   },
 };
 </script>

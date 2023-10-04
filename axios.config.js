@@ -1,8 +1,7 @@
 // setup axios config
 import axios from "axios";
 
-axios.defaults.baseURL =
-  "https://cors-anywhere.herokuapp.com/https://api.foodics.dev/v5";
+axios.defaults.baseURL = "http://localhost:4000";
 
 axios.interceptors.request.use((req) => {
   req.headers.set("Content-Type", "application/json");

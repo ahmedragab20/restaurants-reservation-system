@@ -2,7 +2,7 @@
   <Transition name="fade-in">
     <div
       v-if="value"
-      class="fixed inset-0 w-full h-screen overflow-auto flex justify-center items-center backdrop-blur-sm bg-[#f1f1f1c1]"
+      class="fixed inset-0 w-full h-screen overflow-auto flex justify-center items-center backdrop-blur-sm bg-[#c6c6c6c1]"
       @click.self="$emit('input', false)"
     >
       <slot />
