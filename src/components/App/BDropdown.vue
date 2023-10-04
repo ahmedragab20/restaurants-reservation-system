@@ -240,8 +240,7 @@ export default {
      * when the value prop changes, update the selectedOption
      */
     value: {
-      handler(newValue, oldValue) {
-        console.log("value changed", { newValue, oldValue });
+      handler(newValue) {
         this.selectedOption = newValue;
       },
       immediate: true,
@@ -351,6 +350,13 @@ export default {
     // close dropdown if clicked outside
     addEventListener("click", (e) => {
       if (!this.$el.contains(e.target)) {
+        this.displayBody = false;
+      }
+    });
+
+    // close dropdown if clicked escape
+    addEventListener("keyup", (e) => {
+      if (e.key === "Escape") {
         this.displayBody = false;
       }
     });

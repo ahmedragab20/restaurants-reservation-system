@@ -30,6 +30,7 @@
               v-model="selectedBranches"
               :options="branches"
               active-class="text-white shadow-xl bg-primary hover:bg-primary"
+              option-classes="mb-1"
               searchKey="name"
               multiselect
             >
@@ -39,7 +40,7 @@
                     v-for="(option, index) in selectedBranches"
                     :key="index"
                     class="inline-flex items-center px-2 py-1 mr-1 text-sm font-medium leading-none text-white border rounded-lg bg-primary hover:bg-transparent hover:text-primary border-primary"
-                    @click="filterSelectedBranches(option.id)"
+                    @click.stop="filterSelectedBranches(option.id)"
                   >
                     {{ option.name }}
                   </span>
@@ -131,7 +132,10 @@ export default {
       } finally {
         // we assume that everything went well, without any errors
         this.saving = false;
-        this.$emit("update-branches");
+        this.$emit(
+          "update-branches",
+          this.selectedBranches?.map((b) => b.id)
+        );
         this.toggleDialog();
         this.selectedBranches = [];
       }
