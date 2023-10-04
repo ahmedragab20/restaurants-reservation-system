@@ -1,5 +1,6 @@
 <template>
   <input
+    :value="value"
     @input="$emit('input', $event?.target?.value)"
     :class="{
       'border rounded-lg px-2 py-1.5 border-gray-300 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 bg-white':
@@ -12,13 +13,13 @@
 export default {
   props: {
     value: {
-      type: String || Number,
+      type: [String, Number],
       default: "",
       required: true,
     },
     styleType: {
       type: String,
-      default: "form",
+      default: "",
     },
   },
 };

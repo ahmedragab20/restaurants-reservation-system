@@ -69,7 +69,7 @@
                 v-for="branch in availableBranches"
                 :key="branch.id"
                 @click="toggleEditDialog(branch.id)"
-                class="cursor-pointer select-none hover:bg-slate-10"
+                class="cursor-pointer select-none hover:bg-slate-100"
               >
                 <td class="p-3 sm:p-5">
                   {{ branch.name }}
