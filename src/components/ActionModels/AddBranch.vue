@@ -133,6 +133,7 @@ export default {
         this.saving = false;
         this.$emit("update-branches");
         this.toggleDialog();
+        this.selectedBranches = [];
       }
     },
   },
