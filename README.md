@@ -4,7 +4,7 @@
 
 ```
 pnpm install
-pnpm start
+pnpm serve
 ```
 
 #### to run the server:

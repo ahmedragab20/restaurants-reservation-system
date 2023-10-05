@@ -276,24 +276,13 @@ export default {
           this.$emit("closed");
           this.newBranch = {};
           this.selectedTables = [];
+          this.targetTime = {};
         }
       },
     },
     branch: {
       handler(val) {
         this.newBranch = JSON.parse(JSON.stringify(val));
-        this.newBranch.sections?.forEach((sc) => {
-          sc.tables?.forEach((t) => {
-            if (t.accepts_reservations === true) {
-              this.selectedTables.push({
-                section_name: sc.name,
-                id: t.id,
-                name: t.name,
-                ...t,
-              });
-            }
-          });
-        });
       },
       deep: true,
     },
@@ -391,6 +380,22 @@ export default {
       });
       this.dialog = false;
     },
+  },
+  mounted() {
+    if (!this.branch?.id) return;
+
+    this.newBranch?.sections?.forEach((sc) => {
+      sc.tables?.forEach((t) => {
+        if (t.accepts_reservations === true) {
+          this.selectedTables.push({
+            section_name: sc.name,
+            id: t.id,
+            name: t.name,
+            ...t,
+          });
+        }
+      });
+    });
   },
 };
 </script>
