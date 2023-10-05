@@ -70,6 +70,7 @@ export default {
   data() {
     return {
       newTime: [],
+      firstClick: false,
     };
   },
   watch: {
@@ -99,9 +100,7 @@ export default {
       };
     },
   },
-  updated() {
-    // used updated hook to register the click event after some changes in the component instead of the beginning of the component render
-
+  mounted() {
     // emit event when the user clicks outside the component
     document.addEventListener("click", (e) => {
       e.stopPropagation();
@@ -110,13 +109,18 @@ export default {
         const sameElement = Object.values(this.newTime?.time ?? {}).includes(
           e.target.value
         );
-        if (!this.$refs?.timeHandler?.contains(e.target) && !sameElement) {
+        if (
+          !this.$refs?.timeHandler?.contains(e.target) &&
+          !sameElement &&
+          this.firstClick
+        ) {
           this.$emit("update-time", this.newTime);
         }
+
+        this.firstClick = true;
       });
     });
-  },
-  mounted() {
+
     // emit event when the user clicks Enter
     window.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {

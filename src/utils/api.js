@@ -13,7 +13,7 @@ export const getBranches = async () => {
   }
 };
 
-export const updateBranchs = async (reservations) => {
+export const updateBranchsReservations = async (reservations) => {
   try {
     if (!reservations?.length) {
       return printerr(
@@ -23,6 +23,20 @@ export const updateBranchs = async (reservations) => {
 
     return await axios.put("/branches/update-reservations", {
       accepts_reservations: reservations,
+    });
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const updateBranch = async (branch) => {
+  try {
+    if (!branch?.id) {
+      return printerr("send branch id");
+    }
+
+    return axios.put(`/branches/${branch.id}`, {
+      branch,
     });
   } catch (error) {
     console.error(error);

@@ -100,7 +100,9 @@
     <brach-settings
       :value="editDialog"
       :branch="findBranch(inActionBranchId) || {}"
+      :sending-request="updatingBranch"
       @closed="onBSettingsModelClaosed"
+      @update-branch-settings="updateBranchSettings"
     />
 
     <!-- 
@@ -117,7 +119,11 @@ import BSpinner from "./components/App/BSpinner.vue";
 import AddBranch from "./components/ActionModels/AddBranch.vue";
 import BrachSettings from "./components/ActionModels/BrachSettings.vue";
 
-import { updateBranchs, getBranches } from "@/utils/api";
+import {
+  updateBranchsReservations,
+  getBranches,
+  updateBranch,
+} from "@/utils/api";
 export default {
   components: { BButton, AddBranch, BSpinner, BrachSettings },
   name: "App",
@@ -128,6 +134,7 @@ export default {
       disablingReservations: false,
       editDialog: false,
       inActionBranchId: "",
+      updatingBranch: false,
     };
   },
   computed: {
@@ -194,7 +201,7 @@ export default {
           };
         });
 
-        await updateBranchs(branches);
+        await updateBranchsReservations(branches);
 
         // update the branches locally, for a faster response
         this.branches = {
@@ -230,8 +237,43 @@ export default {
      * and will receive the following payload
      * @param {branch, newBranch} payload
      */
-    onBSettingsModelClaosed(payload) {
-      console.log({ payload });
+    async updateBranchSettings(payload) {
+      try {
+        /**
+         * @Notes: here i have two options,
+         * 1- to check for any changes in the branch object and update it
+         * 2- to update the branch object with the newBranch object anyway
+         *
+         * I'll go with the second option for now, as it's easier to implement and in the worest case scenario
+         * it will update the branch object with the same values.
+         */
+
+        this.updatingBranch = true;
+        this.branches = {
+          ...this.branches,
+          data: this.branches?.data?.map((branch) => {
+            if (branch.id === payload.branch.id) {
+              return {
+                ...branch,
+                ...payload.newBranch,
+              };
+            }
+
+            return branch;
+          }),
+        };
+
+        await updateBranch(payload.newBranch);
+
+        this.inActionBranchId = "";
+        this.editDialog = false;
+      } catch (error) {
+        console.error(error);
+      } finally {
+        this.updatingBranch = false;
+      }
+    },
+    onBSettingsModelClaosed() {
       this.inActionBranchId = "";
       this.editDialog = false;
     },

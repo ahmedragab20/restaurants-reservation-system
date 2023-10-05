@@ -23,6 +23,7 @@ async function getBranches(req, res) {
       });
   } catch (error) {
     console.error(error);
+    res.status(400).json(error);
   }
 }
 
@@ -97,6 +98,7 @@ async function updateBranchsReservations(req, res) {
     });
   } catch (error) {
     console.error(error);
+    req.status(400).json(error);
   } finally {
     res.status(200).json({
       message: "updated successfully",
@@ -105,7 +107,44 @@ async function updateBranchsReservations(req, res) {
   }
 }
 
+// NOTE: this could've been compined with the above function but i wanted to keep it clean and have just one responsibility per function
+async function updateBranch(req, res) {
+  try {
+    const reqBody = req?.body?.branch || {};
+
+    if (!Object.keys(reqBody).length) {
+      return res.status(400).json({
+        error: "No received data to update",
+      });
+    }
+
+    const reqURL = req.protocol + "://" + req.get("host") + req.originalUrl;
+
+    const url = reqURL.replace("http://localhost:4000/", BASE_URL);
+
+    const options = {
+      method: "PUT",
+      url,
+      headers: {
+        Authorization: `Bearer ${process.env.VUE_APP_API_ACCESS_TOKEN}`,
+      },
+      data: reqBody,
+    };
+
+    await axios.request(options);
+
+    res.status(200).json({
+      message: "updated successfully",
+      updatedBranch: reqBody,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(400).json(error);
+  }
+}
+
 module.exports = {
   getBranches,
   updateBranchsReservations,
+  updateBranch,
 };

@@ -86,7 +86,7 @@
 </template>
 
 <script>
-import { updateBranchs } from "@/utils/api";
+import { updateBranchsReservations } from "@/utils/api";
 import BButton from "../App/BButton.vue";
 import BDialog from "../App/BDialog.vue";
 import BDropdown from "../App/BDropdown.vue";
@@ -126,7 +126,7 @@ export default {
           };
         });
 
-        await updateBranchs(branches);
+        await updateBranchsReservations(branches);
       } catch (error) {
         printerr(error);
       } finally {

@@ -7,7 +7,11 @@ const PORT = 4000;
 
 const express = require("express");
 const cors = require("cors");
-const { getBranches, updateBranchsReservations } = require("./controllers");
+const {
+  getBranches,
+  updateBranchsReservations,
+  updateBranch,
+} = require("./controllers");
 
 require("dotenv").config();
 
@@ -19,9 +23,10 @@ app.use(express.json());
 
 // get all branches
 app.get("/branches", getBranches);
-// update branch
+// update branch reservations
 app.put("/branches/update-reservations", updateBranchsReservations);
-
+// update branch
+app.put("/branches/:id", updateBranch);
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });

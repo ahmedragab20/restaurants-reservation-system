@@ -313,7 +313,10 @@ export default {
       }
 
       // emit option-clicked event with the new selectedOption data
-      this.$emit("option-clicked", this.selectedOption);
+      this.$emit("option-clicked", {
+        option,
+        selected: this.optionSelected(option),
+      });
       // update the v-model value with the new selectedOption data
       this.$emit("input", this.selectedOption);
     },

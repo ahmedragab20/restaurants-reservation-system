@@ -38,6 +38,7 @@
                 option-classes="mb-1"
                 searchKey="name"
                 multiselect
+                @option-clicked="bDropdownOptionClicked"
               >
                 <template #d-header>
                   <div v-if="selectedTables?.length">
@@ -70,14 +71,25 @@
           <!-- reservation times -->
           <div>
             <div v-for="time in reservationTimes" :key="time.id">
-              <label
-                :for="time.name"
-                class="mb-1 text-sm capitalize text-slate-600"
-              >
-                {{ time.name }}
-              </label>
+              <div class="flex justify-between">
+                <label
+                  :for="time.name"
+                  class="mb-1 text-sm capitalize text-slate-600"
+                >
+                  {{ time.name }}
+                </label>
+                <div>
+                  <b-button
+                    v-if="time.name === 'saturday'"
+                    class="px-2 py-1 text-xs text-primary"
+                    @click.native="applyOnAllDays"
+                  >
+                    Apply on all days
+                  </b-button>
+                </div>
+              </div>
               <div
-                class="flex items-center justify-between gap-2 px-2 py-1.5 border rounded-lg"
+                class="flex items-center justify-between gap-2 px-2 py-1.5 border rounded-lg mb-1"
               >
                 <div class="w-[calc(100%-50px)] flex gap-2">
                   <template v-if="time.times?.length">
@@ -96,7 +108,7 @@
                           })
                         "
                         class="px-2 py-1 text-xs border rounded-md cursor-pointer select-none border-primary"
-                        ref="timeHandler"
+                        :id="`${time.name}-${tim[0]}-${tim[1]}`"
                       >
                         {{ tim[0] }} - {{ tim[1] }}
                       </span>
@@ -108,6 +120,7 @@
                       ></reservation-time-handler>
                     </div>
                   </template>
+                  <template v-else> Add Available Reservation Times </template>
                 </div>
                 <div
                   class="w-[45px] flex justify-end items-center flex-shrink-0"
@@ -115,6 +128,7 @@
                   <b-button
                     :disabled="time.times?.length >= 3"
                     class="px-2 py-1 text-sm border rounded-lg shadow-sm border-slate-300 bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    @click.native.stop="addNewTime(time.name)"
                   >
                     +
                   </b-button>
@@ -124,18 +138,37 @@
           </div>
         </div>
         <!-- footer -->
-        <div class="flex items-center justify-end gap-2 p-4 border-t">
-          <b-button
-            class="px-4 py-2 text-sm border rounded-lg hover:bg-slate-100"
-          >
-            Close
-          </b-button>
-          <b-button
-            style-type="primary"
-            class="px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            Save
-          </b-button>
+        <div class="flex items-center justify-between gap-2 p-4 border-t">
+          <div>
+            <b-button
+              @click.native.stop="disableReservations"
+              class="px-4 py-2 text-sm text-red-200 border border-red-200 rounded-lg hover:bg-red-400 hover:border-red-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Disable Reservations
+            </b-button>
+          </div>
+          <div class="flex items-center justify-end gap-2">
+            <b-button
+              @click.native.stop="dialog = false"
+              class="px-4 py-2 text-sm border rounded-lg hover:bg-slate-100"
+            >
+              Close
+            </b-button>
+            <b-button
+              :disabled="sendingRequest"
+              :loading="sendingRequest"
+              @click.native.stop="
+                $emit('update-branch-settings', {
+                  branch,
+                  newBranch,
+                })
+              "
+              style-type="primary"
+              class="px-4 py-2 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Save
+            </b-button>
+          </div>
         </div>
       </template>
       <template v-else>
@@ -163,6 +196,10 @@ export default {
       type: Object,
       required: true,
     },
+    sendingRequest: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
@@ -185,6 +222,7 @@ export default {
                 section_name: section.name,
                 id: table.id,
                 name: table.name,
+                ...table,
               };
             });
           })
@@ -195,13 +233,24 @@ export default {
       if (!this.newBranch?.reservation_times) return [];
 
       return (
-        Object.keys(this.newBranch?.reservation_times ?? {})?.map(
-          (day, index) => ({
+        Object.keys(this.newBranch?.reservation_times ?? {})
+          .sort((a, b) => {
+            const days = [
+              "saturday",
+              "sunday",
+              "monday",
+              "tuesday",
+              "wednesday",
+              "thursday",
+              "friday",
+            ];
+            return days.indexOf(a) - days.indexOf(b);
+          })
+          .map((day, index) => ({
             id: `${day}-${index}-${this.newBranch.id}`,
             name: day,
             times: this.newBranch?.reservation_times?.[day],
-          })
-        ) ?? []
+          })) ?? []
       );
     },
     dateMatchesTargetTime: {
@@ -224,10 +273,7 @@ export default {
     dialog: {
       handler(val) {
         if (!val) {
-          this.$emit("closed", {
-            branch: this.branch,
-            newBranch: this.newBranch,
-          });
+          this.$emit("closed");
           this.newBranch = {};
           this.selectedTables = [];
         }
@@ -236,11 +282,35 @@ export default {
     branch: {
       handler(val) {
         this.newBranch = JSON.parse(JSON.stringify(val));
+        this.newBranch.sections?.forEach((sc) => {
+          sc.tables?.forEach((t) => {
+            if (t.accepts_reservations === true) {
+              this.selectedTables.push({
+                section_name: sc.name,
+                id: t.id,
+                name: t.name,
+                ...t,
+              });
+            }
+          });
+        });
       },
       deep: true,
     },
   },
   methods: {
+    bDropdownOptionClicked({ option, selected }) {
+      // find option in newBranch and update accepts_reservations to selected
+      const section = this.newBranch?.sections?.find((s) =>
+        s.tables?.some((t) => t.id === option.id)
+      );
+      if (section) {
+        const table = section.tables.find((t) => t.id === option.id);
+        if (table) {
+          table.accepts_reservations = selected;
+        }
+      }
+    },
     filterSelectedTables(id) {
       this.selectedTables = this.selectedTables?.filter(
         (table) => table.id !== id
@@ -250,7 +320,6 @@ export default {
       this.targetTime = time;
     },
     updateTime(newTime) {
-      console.log(newTime);
       this.newBranch = {
         ...this.newBranch,
         reservation_times: {
@@ -267,7 +336,6 @@ export default {
       };
 
       this.targetTime = {};
-      console.log(this.newBranch?.reservation_times);
     },
     removeTime(time) {
       this.newBranch = {
@@ -281,7 +349,47 @@ export default {
       };
 
       this.targetTime = {};
-      console.log(this.newBranch?.reservation_times);
+    },
+    addNewTime(day) {
+      this.newBranch = {
+        ...this.newBranch,
+        reservation_times: {
+          ...this.newBranch?.reservation_times,
+          [day]: [
+            ...(this.newBranch?.reservation_times?.[day] ?? []),
+            ["00:00", "00:00"],
+          ],
+        },
+      };
+    },
+    /**
+     * applies the saturday times on all days
+     */
+    applyOnAllDays() {
+      this.newBranch = {
+        ...this.newBranch,
+        reservation_times: {
+          ...this.newBranch?.reservation_times,
+          sunday: this.newBranch?.reservation_times?.saturday,
+          monday: this.newBranch?.reservation_times?.saturday,
+          tuesday: this.newBranch?.reservation_times?.saturday,
+          wednesday: this.newBranch?.reservation_times?.saturday,
+          thursday: this.newBranch?.reservation_times?.saturday,
+          friday: this.newBranch?.reservation_times?.saturday,
+        },
+      };
+    },
+    disableReservations() {
+      this.newBranch = {
+        ...this.newBranch,
+        accepts_reservations: false,
+      };
+
+      this.$emit("update-branch-settings", {
+        branch: this.branch,
+        newBranch: this.newBranch,
+      });
+      this.dialog = false;
     },
   },
 };

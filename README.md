@@ -1,24 +1,14 @@
-# app
+## Resturant Reservation System
 
-## Project setup
+#### to run the client:
+
 ```
 pnpm install
+pnpm start
 ```
 
-### Compiles and hot-reloads for development
-```
-pnpm run serve
-```
+#### to run the server:
 
-### Compiles and minifies for production
 ```
-pnpm run build
+pnpm srart:server
 ```
-
-### Lints and fixes files
-```
-pnpm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
