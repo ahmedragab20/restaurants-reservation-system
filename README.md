@@ -12,3 +12,8 @@ pnpm serve
 ```
 pnpm srart:server
 ```
+
+#### prerequisites:
+
+- node
+- nodemon
