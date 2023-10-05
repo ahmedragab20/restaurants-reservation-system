@@ -17,3 +17,9 @@ pnpm srart:server
 
 - node
 - nodemon
+
+#### stack:
+
+- vue
+- express
+- tailwindcss
