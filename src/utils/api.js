@@ -1,13 +1,13 @@
-import axios from "axios";
+import { vFetch } from "very-good-fetch";
 import { printerr } from "./console";
 
-export const getBranches = async () => {
+export const getBranches = async (vOptions) => {
   try {
-    const { data } = await axios.get(
-      "/branches?include[0]=sections&include[1]=sections.tables"
-    );
+    const response = await vFetch("/branches", {
+      vOptions,
+    });
 
-    return data;
+    return response;
   } catch (error) {
     console.error(error);
   }
@@ -21,8 +21,11 @@ export const updateBranchsReservations = async (reservations) => {
       );
     }
 
-    return await axios.put("/branches/update-reservations", {
-      accepts_reservations: reservations,
+    return await vFetch("/branches/update-reservations", {
+      method: "PUT",
+      body: JSON.stringify({
+        accepts_reservations: reservations,
+      }),
     });
   } catch (error) {
     console.error(error);
@@ -35,8 +38,9 @@ export const updateBranch = async (branch) => {
       return printerr("send branch id");
     }
 
-    return axios.put(`/branches/${branch.id}`, {
-      branch,
+    return await vFetch(`/branches/${branch.id}`, {
+      method: "PUT",
+      body: JSON.stringify({ branch }),
     });
   } catch (error) {
     console.error(error);

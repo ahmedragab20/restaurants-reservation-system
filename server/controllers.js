@@ -1,26 +1,36 @@
-const axios = require("axios");
-const BASE_URL = "https://api.foodics.dev/v5/";
-async function getBranches(req, res) {
-  try {
-    const reqURL = req.protocol + "://" + req.get("host") + req.originalUrl;
-    const url = reqURL.replace("http://localhost:4000/", BASE_URL);
+const veryGoodFetch = import("very-good-fetch");
 
-    const options = {
-      method: "GET",
-      url,
+let vSetupConfig = null;
+let vFetch = null;
+(async () => {
+  const vgFetch = await veryGoodFetch;
+  vSetupConfig = vgFetch.vSetupConfig;
+  vFetch = vgFetch.vFetch;
+
+  vSetupConfig({
+    config: {
       headers: {
         Authorization: `Bearer ${process.env.VUE_APP_API_ACCESS_TOKEN}`,
       },
-    };
+    },
+  });
+})();
 
-    await axios
-      .request(options)
-      .then((response) => {
-        res.json(response.data);
-      })
-      .catch((error) => {
-        res.json(error);
+const axios = require("axios");
+const BASE_URL = "https://api.foodics.dev/v5/";
+async function getBranches(req, res) {
+  const reqURL = req.protocol + "://" + req.get("host") + req.originalUrl;
+  const url = reqURL.replace("http://localhost:4000/", BASE_URL);
+
+  try {
+    const response = await vFetch(url);
+    if (response) {
+      res.json(response);
+    } else {
+      res.status(404).json({
+        error: "Something went wrong",
       });
+    }
   } catch (error) {
     console.error(error);
     res.status(400).json(error);
